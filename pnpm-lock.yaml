@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@jnxplus/nx-maven':
+        specifier: ^2.3.0
+        version: 2.3.0(@nx/devkit@22.6.5(nx@22.6.5))(nx@22.6.5)
       '@nx/eslint-plugin':
         specifier: ^22.6.5
         version: 22.6.5(@babel/traverse@7.29.0)(@typescript-eslint/parser@8.58.2(eslint@10.2.0)(typescript@5.9.3))(eslint@10.2.0)(nx@22.6.5)(typescript@5.9.3)
@@ -17,6 +20,9 @@ importers:
       '@nx/workspace':
         specifier: latest
         version: 22.6.5
+      '@prettier/plugin-xml':
+        specifier: ^3.4.1
+        version: 3.4.2(prettier@3.8.3)
       eslint:
         specifier: ^10.2.0
         version: 10.2.0
@@ -26,6 +32,9 @@ importers:
       prettier:
         specifier: ^3.8.3
         version: 3.8.3
+      prettier-plugin-java:
+        specifier: 2.5.0
+        version: 2.5.0
 
 packages:
 
@@ -633,6 +642,22 @@ packages:
     resolution: {integrity: sha512-DmdYgtezMkh3cpU8/1uyXakv3tJRcmcXxBOcO0tbaozPwpmh4YMsnWrQm9ZmZMfa5ocbxzbFk6O4bDPEc/iAnA==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
 
+  '@jnxplus/common@2.3.0':
+    resolution: {integrity: sha512-KhJKP+4yaQxIRktp/rWqut0eJ+0stRleX+MvKqRvNzo5uUYBWkKWRlErtizioZqDp0Z+SyGq88ysCNCbr2vZkQ==}
+    peerDependencies:
+      '@nx/devkit': '>= 22'
+
+  '@jnxplus/nx-maven@2.3.0':
+    resolution: {integrity: sha512-SqYg8rkCBBTVCbVyG/vmh/qMp62BwlyPLk6fIleenSoACHTrzFQGMqLWpwsZ9dK0C0E1hnQf1WMyyt1oZVGKnQ==}
+    peerDependencies:
+      '@nx/devkit': '>= 22'
+      nx: '>= 22'
+
+  '@jnxplus/xml@2.3.0':
+    resolution: {integrity: sha512-uNYzuygaw/0uGDQqMvdtXVunrkeuqEA25Xe68140QEMS61nhSKHQ9BNRuK+5ukQUnl9LL9n1rnQUrqpHGNSpuw==}
+    peerDependencies:
+      '@nx/devkit': '>= 22'
+
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
 
@@ -732,6 +757,11 @@ packages:
     peerDependencies:
       typescript: ^3 || ^4 || ^5
 
+  '@prettier/plugin-xml@3.4.2':
+    resolution: {integrity: sha512-/UyNlHfkuLXG6Ed85KB0WBF283xn2yavR+UtRibBRUcvEJId2DSLdGXwJ/cDa1X++SWDPzq3+GSFniHjkNy7yg==}
+    peerDependencies:
+      prettier: ^3.0.0
+
   '@sinclair/typebox@0.34.49':
     resolution: {integrity: sha512-brySQQs7Jtn0joV8Xh9ZV/hZb9Ozb0pmazDIASBkYKCjXrXU3mpcFahmK/z4YDhGkQvP9mWJbVyahdtU5wQA+A==}
 
@@ -803,6 +833,9 @@ packages:
   '@typescript-eslint/visitor-keys@8.58.2':
     resolution: {integrity: sha512-f1WO2Lx8a9t8DARmcWAUPJbu0G20bJlj8L4z72K00TMeJAoyLr/tHhI/pzYBLrR4dXWkcxO1cWYZEOX8DKHTqA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@xml-tools/parser@1.0.11':
+    resolution: {integrity: sha512-aKqQ077XnR+oQtHJlrAflaZaL7qZsulWc/i/ZEooar5JiWj1eLt0+Wg28cpa+XLney107wXqneC+oG1IZvxkTA==}
 
   '@yarnpkg/lockfile@1.1.0':
     resolution: {integrity: sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==}
@@ -942,6 +975,12 @@ packages:
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
+
+  chevrotain@6.5.0:
+    resolution: {integrity: sha512-BwqQ/AgmKJ8jcMEjaSnfMybnKMgGTrtDKowfTP3pX4jwVy0kNjRsT/AP6h+wC3+3NC+X8X15VWBnTCQlX+wQFg==}
+
+  chevrotain@7.1.1:
+    resolution: {integrity: sha512-wy3mC1x4ye+O+QkEinVJkPf5u2vsrDIYW9G7ZuwFl6v/Yu0LwUuT2POsb+NUWApebyxfkQq6+yDfRExbnI5rcw==}
 
   cli-cursor@3.1.0:
     resolution: {integrity: sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw==}
@@ -1299,6 +1338,9 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  java-parser@2.2.0:
+    resolution: {integrity: sha512-20/Rpuv4FnzTNgWkJBqs2M4qwBuPLMqOqNiwU5j7vKvrw4Ej+re8Aoc92KbDFb61M1u/Sd4Ygst+CpEcKXvhBQ==}
+
   jest-diff@30.3.0:
     resolution: {integrity: sha512-n3q4PDQjS4LrKxfWB3Z5KNk1XjXtZTBwQp71OP0Jo03Z6V60x++K5L8k6ZrW8MY8pOFylZvHM0zsjS1RqlHJZQ==}
     engines: {node: ^18.14.0 || ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -1359,6 +1401,9 @@ packages:
 
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+
+  lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -1476,6 +1521,14 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  prettier-plugin-java@2.5.0:
+    resolution: {integrity: sha512-6Uc1yHVrLTwgl7D9hsBS3Xa2qXXlEd4v/6z1oio7u8O6mQdh/6cP0cbhS1daik9tNSMMES/VyzI+78918KRuGA==}
+
+  prettier@3.0.3:
+    resolution: {integrity: sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   prettier@3.8.3:
     resolution: {integrity: sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==}
     engines: {node: '>=14'}
@@ -1506,6 +1559,12 @@ packages:
 
   regenerate@1.4.2:
     resolution: {integrity: sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==}
+
+  regexp-to-ast@0.4.0:
+    resolution: {integrity: sha512-4qf/7IsIKfSNHQXSwial1IFmfM1Cc/whNBQqRwe0V2stPe7KmN1U0tWQiIx6JiirgSrisjE0eECdNf7Tav1Ntw==}
+
+  regexp-to-ast@0.5.0:
+    resolution: {integrity: sha512-tlbJqcMHnPKI9zSrystikWKwHkBqu2a/Sgw01h3zFjvYrMxEDYHzzoMZnUrbIfpTFEsoRnnviOXNCzFiSc54Qw==}
 
   regexpu-core@6.4.0:
     resolution: {integrity: sha512-0ghuzq67LI9bLXpOX/ISfve/Mq33a4aFRzoQYhnnok1JOFpmE/A2TBGkNVenOGEeSBCjIiWcc6MVOG5HEQv0sA==}
@@ -1541,6 +1600,10 @@ packages:
 
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
+
+  sax@1.6.0:
+    resolution: {integrity: sha512-6R3J5M4AcbtLUdZmRv2SygeVaM7IhrLXu9BmnOGmmACak8fiUtOsYNWUS4uK7upbmHIBbLBeFeI//477BKLBzA==}
+    engines: {node: '>=11.0.0'}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -1683,6 +1746,10 @@ packages:
 
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+
+  xmldoc@2.0.3:
+    resolution: {integrity: sha512-6gRk4NY/Jvg67xn7OzJuxLRsGgiXBaPUQplVJ/9l99uIugxh4FTOewYz5ic8WScj7Xx/2WvhENiQKwkK9RpE4w==}
+    engines: {node: '>=12.0.0'}
 
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
@@ -2488,6 +2555,26 @@ snapshots:
     dependencies:
       '@sinclair/typebox': 0.34.49
 
+  '@jnxplus/common@2.3.0(@nx/devkit@22.6.5(nx@22.6.5))':
+    dependencies:
+      '@nx/devkit': 22.6.5(nx@22.6.5)
+      tslib: 2.8.1
+
+  '@jnxplus/nx-maven@2.3.0(@nx/devkit@22.6.5(nx@22.6.5))(nx@22.6.5)':
+    dependencies:
+      '@jnxplus/common': 2.3.0(@nx/devkit@22.6.5(nx@22.6.5))
+      '@jnxplus/xml': 2.3.0(@nx/devkit@22.6.5(nx@22.6.5))
+      '@nx/devkit': 22.6.5(nx@22.6.5)
+      nx: 22.6.5
+      tslib: 2.8.1
+      xmldoc: 2.0.3
+
+  '@jnxplus/xml@2.3.0(@nx/devkit@22.6.5(nx@22.6.5))':
+    dependencies:
+      '@nx/devkit': 22.6.5(nx@22.6.5)
+      tslib: 2.8.1
+      xmldoc: 2.0.3
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -2637,6 +2724,11 @@ snapshots:
       esquery: 1.7.0
       typescript: 5.9.3
 
+  '@prettier/plugin-xml@3.4.2(prettier@3.8.3)':
+    dependencies:
+      '@xml-tools/parser': 1.0.11
+      prettier: 3.8.3
+
   '@sinclair/typebox@0.34.49': {}
 
   '@tybys/wasm-util@0.9.0':
@@ -2729,6 +2821,10 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.58.2
       eslint-visitor-keys: 5.0.1
+
+  '@xml-tools/parser@1.0.11':
+    dependencies:
+      chevrotain: 7.1.1
 
   '@yarnpkg/lockfile@1.1.0': {}
 
@@ -2880,6 +2976,14 @@ snapshots:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+
+  chevrotain@6.5.0:
+    dependencies:
+      regexp-to-ast: 0.4.0
+
+  chevrotain@7.1.1:
+    dependencies:
+      regexp-to-ast: 0.5.0
 
   cli-cursor@3.1.0:
     dependencies:
@@ -3209,6 +3313,11 @@ snapshots:
 
   isexe@2.0.0: {}
 
+  java-parser@2.2.0:
+    dependencies:
+      chevrotain: 6.5.0
+      lodash: 4.17.21
+
   jest-diff@30.3.0:
     dependencies:
       '@jest/diff-sequences': 30.3.0
@@ -3262,6 +3371,8 @@ snapshots:
       p-locate: 5.0.0
 
   lodash.debounce@4.0.8: {}
+
+  lodash@4.17.21: {}
 
   log-symbols@4.1.0:
     dependencies:
@@ -3417,6 +3528,14 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
+  prettier-plugin-java@2.5.0:
+    dependencies:
+      java-parser: 2.2.0
+      lodash: 4.17.21
+      prettier: 3.0.3
+
+  prettier@3.0.3: {}
+
   prettier@3.8.3: {}
 
   pretty-format@30.3.0:
@@ -3442,6 +3561,10 @@ snapshots:
       regenerate: 1.4.2
 
   regenerate@1.4.2: {}
+
+  regexp-to-ast@0.4.0: {}
+
+  regexp-to-ast@0.5.0: {}
 
   regexpu-core@6.4.0:
     dependencies:
@@ -3477,6 +3600,8 @@ snapshots:
       signal-exit: 3.0.7
 
   safe-buffer@5.2.1: {}
+
+  sax@1.6.0: {}
 
   semver@6.3.1: {}
 
@@ -3598,6 +3723,10 @@ snapshots:
       strip-ansi: 6.0.1
 
   wrappy@1.0.2: {}
+
+  xmldoc@2.0.3:
+    dependencies:
+      sax: 1.6.0
 
   y18n@5.0.8: {}
 

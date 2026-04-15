@@ -5,11 +5,15 @@
   "scripts": {},
   "private": true,
   "devDependencies": {
+    "@jnxplus/nx-maven": "^2.3.0",
     "@nx/eslint-plugin": "^22.6.5",
     "@nx/js": "22.6.5",
     "@nx/workspace": "latest",
+    "@prettier/plugin-xml": "^3.4.1",
     "eslint": "^10.2.0",
     "nx": "22.6.5",
-    "prettier": "^3.8.3"
-  }
+    "prettier": "^3.8.3",
+    "prettier-plugin-java": "2.5.0"
+  },
+  "dependencies": {}
 }
