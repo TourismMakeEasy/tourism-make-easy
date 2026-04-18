@@ -3,6 +3,12 @@ package com.tourism.service.booking.central.controller;
 import com.tourism.service.booking.central.dto.BookingRequest;
 import com.tourism.service.booking.central.dto.BookingResponse;
 import com.tourism.service.booking.central.dto.ResortDto;
+import com.tourism.service.booking.central.entity.BookingEntity;
+import com.tourism.service.booking.central.entity.ResortEntity;
+import com.tourism.service.booking.central.repository.BookingRepository;
+import com.tourism.service.booking.central.repository.ResortRepository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,82 +18,31 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ResortController {
 
-  private final Map<Long, ResortDto> resorts = new ConcurrentHashMap<>();
-  private final Map<String, BookingResponse> bookings = new ConcurrentHashMap<>();
-  private final AtomicLong idGenerator = new AtomicLong(1);
-
-  public ResortController() {
-    // Seed with mock data
-    resorts.put(
-      1L,
-      ResortDto.builder()
-        .id(1L)
-        .name("Taj Lake Palace")
-        .location("Udaipur, Rajasthan")
-        .description(
-          "A stunning luxury hotel floating on Lake Pichola, offering breathtaking views and royal heritage."
-        )
-        .pricePerNight(new BigDecimal("25000.00"))
-        .rating(4.9)
-        .amenities(List.of("Pool", "Spa", "Lake View", "Fine Dining", "Boat Transfer"))
-        .imageUrl("https://example.com/taj-lake-palace.jpg")
-        .build()
-    );
-
-    resorts.put(
-      2L,
-      ResortDto.builder()
-        .id(2L)
-        .name("Kumarakom Lake Resort")
-        .location("Kumarakom, Kerala")
-        .description(
-          "A luxurious lakeside resort nestled amid the tranquil Kerala backwaters."
-        )
-        .pricePerNight(new BigDecimal("18000.00"))
-        .rating(4.7)
-        .amenities(List.of("Houseboat", "Ayurveda Spa", "Infinity Pool", "Backwater Cruise"))
-        .imageUrl("https://example.com/kumarakom.jpg")
-        .build()
-    );
-
-    resorts.put(
-      3L,
-      ResortDto.builder()
-        .id(3L)
-        .name("Wildflower Hall")
-        .location("Shimla, Himachal Pradesh")
-        .description(
-          "A former residence of Lord Kitchener set amid 22 acres of cedar forest in the Himalayas."
-        )
-        .pricePerNight(new BigDecimal("22000.00"))
-        .rating(4.8)
-        .amenities(List.of("Mountain View", "Heated Pool", "Trekking", "Spa", "Jacuzzi"))
-        .imageUrl("https://example.com/wildflower-hall.jpg")
-        .build()
-    );
-  }
+  private final ResortRepository resortRepository;
+  private final BookingRepository bookingRepository;
 
   // ──── RESORT ENDPOINTS ────
 
   @GetMapping("/resorts")
   public ResponseEntity<List<ResortDto>> getAllResorts() {
-    return ResponseEntity.ok(new ArrayList<>(resorts.values()));
+    List<ResortDto> resorts = resortRepository.findAll().stream()
+      .map(this::toDto)
+      .toList();
+    return ResponseEntity.ok(resorts);
   }
 
   @GetMapping("/resorts/{id}")
   public ResponseEntity<ResortDto> getResortById(@PathVariable Long id) {
-    ResortDto resort = resorts.get(id);
-    if (resort == null) {
-      return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(resort);
+    return resortRepository.findById(id)
+      .map(this::toDto)
+      .map(ResponseEntity::ok)
+      .orElse(ResponseEntity.notFound().build());
   }
 
   @GetMapping("/resorts/search")
@@ -95,11 +50,25 @@ public class ResortController {
     @RequestParam(required = false) String location,
     @RequestParam(required = false) Double maxPrice
   ) {
-    List<ResortDto> results = resorts.values().stream()
-      .filter(r -> location == null || r.getLocation().toLowerCase().contains(location.toLowerCase()))
-      .filter(r -> maxPrice == null || r.getPricePerNight().doubleValue() <= maxPrice)
-      .toList();
-    return ResponseEntity.ok(results);
+    List<ResortEntity> results;
+
+    if (location != null && maxPrice != null) {
+      results = resortRepository
+        .findByLocationContainingIgnoreCaseAndPricePerNightLessThanEqual(
+          location,
+          BigDecimal.valueOf(maxPrice)
+        );
+    } else if (location != null) {
+      results = resortRepository.findByLocationContainingIgnoreCase(location);
+    } else if (maxPrice != null) {
+      results = resortRepository.findByPricePerNightLessThanEqual(
+        BigDecimal.valueOf(maxPrice)
+      );
+    } else {
+      results = resortRepository.findAll();
+    }
+
+    return ResponseEntity.ok(results.stream().map(this::toDto).toList());
   }
 
   // ──── BOOKING ENDPOINTS ────
@@ -108,11 +77,12 @@ public class ResortController {
   public ResponseEntity<BookingResponse> createBooking(
     @RequestBody BookingRequest request
   ) {
-    ResortDto resort = resorts.get(request.getResortId());
-    if (resort == null) {
+    Optional<ResortEntity> resortOpt = resortRepository.findById(request.getResortId());
+    if (resortOpt.isEmpty()) {
       return ResponseEntity.badRequest().build();
     }
 
+    ResortEntity resort = resortOpt.get();
     long nights = ChronoUnit.DAYS.between(request.getCheckIn(), request.getCheckOut());
     if (nights <= 0) {
       return ResponseEntity.badRequest().build();
@@ -120,7 +90,7 @@ public class ResortController {
 
     String bookingId = "BK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-    BookingResponse booking = BookingResponse.builder()
+    BookingEntity booking = BookingEntity.builder()
       .bookingId(bookingId)
       .status("CONFIRMED")
       .resortId(resort.getId())
@@ -135,31 +105,71 @@ public class ResortController {
       .createdAt(LocalDateTime.now())
       .build();
 
-    bookings.put(bookingId, booking);
-    return ResponseEntity.status(HttpStatus.CREATED).body(booking);
+    bookingRepository.save(booking);
+    return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(booking));
   }
 
   @GetMapping("/bookings/{bookingId}")
   public ResponseEntity<BookingResponse> getBooking(@PathVariable String bookingId) {
-    BookingResponse booking = bookings.get(bookingId);
-    if (booking == null) {
-      return ResponseEntity.notFound().build();
-    }
-    return ResponseEntity.ok(booking);
+    return bookingRepository.findByBookingId(bookingId)
+      .map(this::toResponse)
+      .map(ResponseEntity::ok)
+      .orElse(ResponseEntity.notFound().build());
   }
 
   @GetMapping("/bookings")
   public ResponseEntity<List<BookingResponse>> getAllBookings() {
-    return ResponseEntity.ok(new ArrayList<>(bookings.values()));
+    List<BookingResponse> bookings = bookingRepository.findAll().stream()
+      .map(this::toResponse)
+      .toList();
+    return ResponseEntity.ok(bookings);
   }
 
   @DeleteMapping("/bookings/{bookingId}")
   public ResponseEntity<BookingResponse> cancelBooking(@PathVariable String bookingId) {
-    BookingResponse booking = bookings.get(bookingId);
-    if (booking == null) {
+    Optional<BookingEntity> bookingOpt = bookingRepository.findByBookingId(bookingId);
+    if (bookingOpt.isEmpty()) {
       return ResponseEntity.notFound().build();
     }
+    BookingEntity booking = bookingOpt.get();
     booking.setStatus("CANCELLED");
-    return ResponseEntity.ok(booking);
+    bookingRepository.save(booking);
+    return ResponseEntity.ok(toResponse(booking));
+  }
+
+  // ──── MAPPERS (temporary — will be replaced by MapStruct) ────
+
+  private ResortDto toDto(ResortEntity entity) {
+    return ResortDto.builder()
+      .id(entity.getId())
+      .name(entity.getName())
+      .location(entity.getLocation())
+      .description(entity.getDescription())
+      .pricePerNight(entity.getPricePerNight())
+      .rating(entity.getRating())
+      .amenities(
+        entity.getAmenities() != null
+          ? List.of(entity.getAmenities().split(","))
+          : List.of()
+      )
+      .imageUrl(entity.getImageUrl())
+      .build();
+  }
+
+  private BookingResponse toResponse(BookingEntity entity) {
+    return BookingResponse.builder()
+      .bookingId(entity.getBookingId())
+      .status(entity.getStatus())
+      .resortId(entity.getResortId())
+      .resortName(entity.getResortName())
+      .guestName(entity.getGuestName())
+      .guestEmail(entity.getGuestEmail())
+      .checkIn(entity.getCheckIn())
+      .checkOut(entity.getCheckOut())
+      .guests(entity.getGuests())
+      .nights(entity.getNights())
+      .totalPrice(entity.getTotalPrice())
+      .createdAt(entity.getCreatedAt())
+      .build();
   }
 }
