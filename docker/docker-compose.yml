@@ -1,3 +1,5 @@
+name: tourism-make-easy
+
 services:
   # ── PostgreSQL ──────────────────────────────────────────────
   postgres:
