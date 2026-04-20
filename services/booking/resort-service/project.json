@@ -1,8 +1,8 @@
 {
-  "name": "common-lib",
+  "name": "resort-service",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "projectType": "library",
-  "sourceRoot": "./services/booking/common-lib/src",
+  "projectType": "application",
+  "sourceRoot": "./services/booking/resort-service/src",
   "targets": {
     "build": {
       "executor": "@jnxplus/nx-maven:run-task",
@@ -17,7 +17,15 @@
         "task": "test"
       },
       "dependsOn": ["^build"]
+    },
+    "serve": {
+      "executor": "@jnxplus/nx-maven:run-task",
+      "options": {
+        "task": "spring-boot:run"
+      },
+      "dependsOn": ["^build"]
     }
   },
-  "tags": ["scope:booking", "type:library"]
+  "tags": ["scope:booking", "type:service"],
+  "implicitDependencies": ["common-lib"]
 }

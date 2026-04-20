@@ -11,6 +11,6 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>services/booking/common-lib</module>
+    <module>services/booking</module>
   </modules>
 </project>

@@ -1,0 +1,53 @@
+# ──────────────────────────────────────────────────────────────
+# Multi-stage Dockerfile for all Java booking microservices.
+# Usage: docker build --build-arg SERVICE_NAME=central-service -f docker/Dockerfile.service .
+# ──────────────────────────────────────────────────────────────
+
+# ── Stage 1: Build ────────────────────────────────────────────
+FROM eclipse-temurin:25-jdk-alpine AS builder
+
+ARG SERVICE_NAME
+
+WORKDIR /workspace
+
+# Copy Maven wrapper and root POM first (caches dependency downloads)
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY services/booking/pom.xml services/booking/pom.xml
+
+# Copy all module POMs for dependency resolution
+COPY services/booking/common-lib/pom.xml services/booking/common-lib/pom.xml
+COPY services/booking/central-service/pom.xml services/booking/central-service/pom.xml
+COPY services/booking/inventory-service/pom.xml services/booking/inventory-service/pom.xml
+COPY services/booking/reservation-service/pom.xml services/booking/reservation-service/pom.xml
+COPY services/booking/resort-service/pom.xml services/booking/resort-service/pom.xml
+
+# Download dependencies (cached layer unless POMs change)
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B -q 2>/dev/null || true
+
+# Copy source code
+COPY services/booking/common-lib/src services/booking/common-lib/src
+COPY services/booking/${SERVICE_NAME}/src services/booking/${SERVICE_NAME}/src
+
+# Build the target service + common-lib dependency
+RUN ./mvnw clean package -DskipTests -B \
+    -pl services/booking/common-lib,services/booking/${SERVICE_NAME} \
+    -am
+
+# ── Stage 2: Runtime ─────────────────────────────────────────
+FROM eclipse-temurin:25-jre-alpine
+
+ARG SERVICE_NAME
+
+WORKDIR /app
+
+# Copy the built JAR
+COPY --from=builder /workspace/services/booking/${SERVICE_NAME}/target/*.jar app.jar
+
+# Spring profile for Docker environment
+ENV SPRING_PROFILES_ACTIVE=docker
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

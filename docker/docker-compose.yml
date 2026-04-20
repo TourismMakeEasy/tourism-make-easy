@@ -1,0 +1,121 @@
+name: tourism-make-easy
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: tme-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+      CENTRAL_DB: ${CENTRAL_DB}
+      INVENTORY_DB: ${INVENTORY_DB}
+      RESERVATION_DB: ${RESERVATION_DB}
+      RESORT_DB: ${RESORT_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Central Service (port 8080) ─────────────────────────────
+  central-service:
+    container_name: tme-central
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: central-service
+    ports:
+      - "${CENTRAL_SERVICE_PORT}:${CENTRAL_SERVICE_PORT}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SERVER_PORT: ${CENTRAL_SERVICE_PORT}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:5432/${CENTRAL_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${JPA_DDL_AUTO}
+      SPRING_JPA_SHOW_SQL: ${JPA_SHOW_SQL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Inventory Service (port 8081) ───────────────────────────
+  inventory-service:
+    container_name: tme-inventory
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: inventory-service
+    ports:
+      - "${INVENTORY_SERVICE_PORT}:${INVENTORY_SERVICE_PORT}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SERVER_PORT: ${INVENTORY_SERVICE_PORT}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:5432/${INVENTORY_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${JPA_DDL_AUTO}
+      SPRING_JPA_SHOW_SQL: ${JPA_SHOW_SQL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Reservation Service (port 8082) ─────────────────────────
+  reservation-service:
+    container_name: tme-reservation
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: reservation-service
+    ports:
+      - "${RESERVATION_SERVICE_PORT}:${RESERVATION_SERVICE_PORT}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SERVER_PORT: ${RESERVATION_SERVICE_PORT}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:5432/${RESERVATION_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${JPA_DDL_AUTO}
+      SPRING_JPA_SHOW_SQL: ${JPA_SHOW_SQL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Resort Service (port 8083) ──────────────────────────────
+  resort-service:
+    container_name: tme-resort
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: resort-service
+    ports:
+      - "${RESORT_SERVICE_PORT}:${RESORT_SERVICE_PORT}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SERVER_PORT: ${RESORT_SERVICE_PORT}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${POSTGRES_HOST}:5432/${RESORT_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${JPA_DDL_AUTO}
+      SPRING_JPA_SHOW_SQL: ${JPA_SHOW_SQL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
